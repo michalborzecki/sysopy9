@@ -80,8 +80,8 @@ void cleanup() {
     for (int i = 0; i < 5; i++)
         pthread_join(threads_ids[i], NULL);
     for (int i = 0; i < 5; i++)
-            sem_close(&forks[i]);
-    sem_close(&waiter);
+            sem_destroy(&forks[i]);
+    sem_destroy(&waiter);
 }
 
 void sigint_handler(int signum) {
