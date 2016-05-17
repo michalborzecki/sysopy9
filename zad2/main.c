@@ -72,7 +72,7 @@ void *plane_thread(void *arg) {
         }
     }
 
-    unsigned int min_time = 50, max_time = 1000;
+    unsigned int min_time = 500000, max_time = 1000000;
     while (1) {
         printf("%d | Plane #%d is in the air.\n", on_aircraft_carrier, plane_id);
         usleep(random_utime(min_time, max_time));
@@ -104,7 +104,7 @@ void free_airstrip() {
 void start() {
     start_counter++;
     pthread_mutex_lock(&aircraft_carrier_mutex);
-    while (!available)
+    while (!available || (on_aircraft_carrier < k && land_counter > 0))
         pthread_cond_wait(&start_cond, &aircraft_carrier_mutex);
     available = 0;
     usleep(100000);
@@ -118,7 +118,7 @@ void start() {
 void land() {
     land_counter++;
     pthread_mutex_lock(&aircraft_carrier_mutex);
-    while (!available || on_aircraft_carrier == n)
+    while (!available || on_aircraft_carrier == n || (on_aircraft_carrier >= k && start_counter > 0))
         pthread_cond_wait(&land_cond, &aircraft_carrier_mutex);
     available = 0;
     usleep(100000);
